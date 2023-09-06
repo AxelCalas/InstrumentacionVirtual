@@ -71,7 +71,6 @@ void MainWindow::handleError(QSerialPort::SerialPortError error)
 void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
-    ->putData(data);
 }
 
 void MainWindow::on_connectButton_clicked()
