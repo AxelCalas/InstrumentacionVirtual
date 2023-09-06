@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_serial(new QSerialPort(this)),
-    file(new QSaveFile)
-{
+    file(new QSaveFile(this))
+{   
     // Set the UI to the main program
     ui->setupUi(this);
 
@@ -27,12 +27,12 @@ MainWindow::MainWindow(QWidget *parent):
     m_serial->setFlowControl(QSerialPort::NoFlowControl);
 
     connect(m_serial, &QSerialPort::errorOccurred, this, &MainWindow::handleError);
-
     connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
-
     // To write into serial port unncomment this statement and the slot declaration in header file
     //connect(m_console, &Console::getData, this, &MainWindow::writeData);
 
+    // File settings
+    file->setFileName("C:/Users/Axel/Documents/InstrumentacionVirtual/transmitedFile.txt");
 }
 
 MainWindow::~MainWindow()
@@ -71,6 +71,20 @@ void MainWindow::handleError(QSerialPort::SerialPortError error)
 void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
+    writeFile(data);
+    updateUI(data);
+}
+
+void MainWindow::writeFile(const QByteArray data)
+{
+    file->open(QIODevice::Append);
+    file->write(data);
+    file->commit();
+}
+
+void MainWindow::updateUI(const QByteArray data)
+{
+
 }
 
 void MainWindow::on_connectButton_clicked()

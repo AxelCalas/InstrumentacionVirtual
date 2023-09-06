@@ -32,6 +32,8 @@ private:
     QSaveFile *file = nullptr;
     void openSerialPort();
     void closeSerialPort();
+    void writeFile(const QByteArray data);
+    void updateUI(const QByteArray data);
 };
 
 #endif // MAINWINDOW_H
