@@ -14,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent):
     ui->setupUi(this);
 
     // Set serial port status as disconnected when program starts
-    ui->connectionStatus->setText("DISCONNECTED...");
+    ui->connectionStatus->setText("Disconnected");
 
     // Set all data in cero (call method here in case needed)
 
     // Set the serial port configurations
-    m_serial->setPortName("COM5");
-    m_serial->setBaudRate(QSerialPort::Baud9600);
+    m_serial->setPortName("COM9");
+    m_serial->setBaudRate(QSerialPort::Baud115200);
     m_serial->setDataBits(QSerialPort::Data8);
     m_serial->setParity(QSerialPort::NoParity);
     m_serial->setStopBits(QSerialPort::OneStop);
@@ -32,11 +32,13 @@ MainWindow::MainWindow(QWidget *parent):
     //connect(m_console, &Console::getData, this, &MainWindow::writeData);
 
     // File settings
-    file->setFileName("C:/Users/Axel/Documents/InstrumentacionVirtual/transmitedFile.txt");
+    file->setFileName("C:/Users/Axel/Documents/InstrumentacionVirtual/transmitedFile.bin");
+    file->open(QIODevice::WriteOnly);
 }
 
 MainWindow::~MainWindow()
 {
+    closeSerialPort();
     delete ui;
 }
 
@@ -58,6 +60,8 @@ void MainWindow::closeSerialPort()
         if (!m_serial->isOpen())
             ui->connectionStatus->setText("Disconnected");
     }
+
+    file->commit();
 }
 
 void MainWindow::handleError(QSerialPort::SerialPortError error)
@@ -77,9 +81,7 @@ void MainWindow::readData()
 
 void MainWindow::writeFile(const QByteArray data)
 {
-    file->open(QIODevice::Append);
-    file->write(data);
-    file->commit();
+  file->write(data);
 }
 
 void MainWindow::updateUI(const QByteArray data)
@@ -91,6 +93,7 @@ void MainWindow::on_connectButton_clicked()
 {
     if(ui->connectButton->text() == "Connect") {
         openSerialPort();
+
     } else if (ui->connectButton->text() == "Disconnect") {
         closeSerialPort();
     }
